@@ -1,0 +1,23 @@
+{
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "prettier": "^3.5.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "name": "modelamiento",
+  "version": "1.0.0",
+  "main": "./dist/server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "npx tsc --watch",
+    "start": "node dist/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
