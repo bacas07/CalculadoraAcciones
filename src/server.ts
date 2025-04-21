@@ -1,17 +1,21 @@
 import express from 'express';
-import { config } from 'dotenv';
+import { connectDB } from './database/mongo.js';
 
-config();
-
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const server = express();
 
 server.use(express.json());
 
-try {
-  server.listen(PORT, () => {
-    console.log('Servidor activo en el puerto: ', PORT);
-  });
-} catch (error) {
-  console.log('Error activando el servidor');
-}
+const startingServer = async () => {
+  try {
+    await connectDB();
+    server.listen(PORT, () => {
+      console.log('> Servidor activo en el puerto: ', PORT, '(❁´◡`❁)');
+    });
+  } catch (error) {
+    console.error('> Error activando el servidor (っ °Д °;)っ');
+    process.exit(1);
+  }
+};
+
+startingServer();
