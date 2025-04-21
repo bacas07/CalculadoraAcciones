@@ -20,7 +20,7 @@ const interpolateWithTime = (
 
     if (prevIdx < 0 || nextIdx >= y.length) {
       const avg = mean(y.filter((val) => val !== null) as number[]);
-      return { timestamp: point.timestamp, value: avg }
+      return { timestamp: point.timestamp, value: avg };
     }
 
     // Interpolacion lineal con el tiempo
@@ -33,4 +33,29 @@ const interpolateWithTime = (
 
     return { timestamp: point.timestamp, value: interpolatedValue };
   });
+};
+
+// Generar predicciones futuras
+const generatePredictions = (
+  regression: { slope: number; intercept: number },
+  lastDate: Date,
+  timeRangeMs: number,
+  timeRange: string
+): ForexDataPoint[] => {
+  // En caso de no haber 1, se inicia con un valor por defecto
+  const steps = timeRange.startsWith('1') ? 1 : 3;
+  const predictions: ForexDataPoint[] = [];
+
+  for (var i = 1; i <= steps; i++) {
+    const futureDate = addTimeToDate(lastDate, (i * timeRangeMs) / steps);
+    const futureX = futureDate.getTime();
+    const futureY = regression.slope * futureX + regression.intercept;
+
+    predictions.push({
+      timestamp: futureDate.toISOString(),
+      value: futureY,
+    });
+  }
+
+  return predictions;
 };
