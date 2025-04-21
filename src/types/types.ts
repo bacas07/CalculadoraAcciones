@@ -6,7 +6,7 @@ export interface ForexDataPoint {
 export interface ForexRequest {
   data: ForexDataPoint[]; // Datos para interpolar
   timeRange: string; // Tiempo estimado de prediccion
-}
+} 
 
 export interface ForexResponse {
   historical: ForexDataPoint[]; // Datos limpios ya interpolados
