@@ -35,12 +35,9 @@ const interpolateWithTime = (
   });
 };
 
-const linearRegressionWithTime = (
-  x: number[],
-  y: ForexDataPoint[]
-) => {
+const linearRegressionWithTime = (x: number[], y: ForexDataPoint[]) => {
   const xValues = x;
-  const yValues = y.map(d => d.value as number);
+  const yValues = y.map((d) => d.value as number);
 
   const xMean = mean(xValues);
   const yMean = mean(yValues);
@@ -49,7 +46,9 @@ const linearRegressionWithTime = (
   const yMinusMean = subtract(yValues, yMean).valueOf() as number[];
 
   const numerator = sum(multiply(xMinusMean, yMinusMean).valueOf() as number[]);
-  const denominator = sum(multiply(xMinusMean, xMinusMean).valueOf() as number[]);
+  const denominator = sum(
+    multiply(xMinusMean, xMinusMean).valueOf() as number[]
+  );
 
   const slope = numerator / denominator;
   const intercept = yMean - slope * xMean;
@@ -95,5 +94,19 @@ export const predictForex = (request: ForexRequest): ForexResponse => {
   const cleanData = interpolateWithTime(x, y, data);
 
   // Regresion lineal usando tiempo como variable independiente
-  const regresion = null
+  const regression = linearRegressionWithTime(x, cleanData);
+
+  // Generar predicciones futuras con timestamp
+  const lastDate = new Date(data[data.length - 1].timestamp);
+  const predictedData = generatePredictions(
+    regression,
+    lastDate,
+    timeRangeMs,
+    timeRange
+  );
+
+  return {
+    historical: cleanData,
+    predicted: predictedData,
+  };
 };
