@@ -1,12 +1,14 @@
 {
   "devDependencies": {
     "@types/express": "^5.0.1",
+    "@types/mathjs": "^9.4.1",
     "prettier": "^3.5.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "mathjs": "^14.4.0"
   },
   "name": "modelamiento",
   "version": "1.0.0",
