@@ -18,12 +18,12 @@ export default class ForexRequestService {
     }
   };
 
-  /*create = async (request: ForexRequest) => {
+  create = async (request: ForexRequest) => {
     try {
       const created = await ForexRequestModel.create(request);
       return created;
     } catch (error) {
       return console.error('Error ForexRequestModel create: ', error);
     }
-  };*/
+  };
 }
