@@ -30,9 +30,10 @@ export const findByIDForexRequest = async (req: Request, res: Response) => {
         .json({ message: `No request forex found with id: ${id}` });
     }
 
-    return res
-      .status(200)
-      .json({ message: `forex request foud with id: ${id}`, request: request });
+    return res.status(200).json({
+      message: `forex request found with id: ${id}`,
+      request: request,
+    });
   } catch (error) {
     console.error('Error forexRequestController findByID: ', error);
     return res.status(500).json({ error: 'Error finding forex request by id' });
@@ -49,5 +50,26 @@ export const createForexRequest = async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Error forexRequestController create: ', error);
     return res.status(500).json({ error: 'Error creating forex request' });
+  }
+};
+
+export const deleteForexRequest = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const deleteRequest = await ForexRequestService.delete(id);
+
+    if (!deleteRequest) {
+      return res
+        .status(404)
+        .json({ message: `No request forex found with id: ${id}` });
+    }
+
+    return res.status(204).json({
+      message: 'Forex request deleted sucessfully',
+      request: deleteRequest,
+    });
+  } catch (error) {
+    console.error('Error forexRequestController delete: ', error);
+    return res.status(500).json({ error: 'Error deleting forex request' });
   }
 };
