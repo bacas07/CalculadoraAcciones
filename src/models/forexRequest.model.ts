@@ -26,4 +26,12 @@ export default class ForexRequestService {
       return console.error('Error ForexRequestModel create: ', error);
     }
   };
+
+  delete = async (id: string) => {
+    try {
+      return await ForexRequestModel.findByIdAndDelete(id);
+    } catch (error) {
+      return console.error('Error ForexRequestModel delete: ', error);
+    }
+  };
 }
