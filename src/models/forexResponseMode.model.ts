@@ -34,4 +34,12 @@ export default class ForexResponseServive {
       return console.error('Error ForexResponseModel create: ', error);
     }
   };
+
+  delete = async (id: string) => {
+    try {
+      return await ForexResponseModel.findByIdAndDelete(id);
+    } catch (error) {
+      return console.error('Error ForexResponseModel delete: ', error);
+    }
+  };
 }
