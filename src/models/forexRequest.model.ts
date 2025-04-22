@@ -1,5 +1,5 @@
 import { ForexRequestModel } from '../schemas/forexRequest.schema.js';
-import type { ForexRequest } from '../types/types.js';
+import type { IForexRequest } from '../types/types.js';
 
 export default class ForexRequestService {
   findAll = async () => {
@@ -18,7 +18,7 @@ export default class ForexRequestService {
     }
   };
 
-  create = async (request: ForexRequest) => {
+  create = async (request: IForexRequest) => {
     try {
       const created = await ForexRequestModel.create(request);
       return created;

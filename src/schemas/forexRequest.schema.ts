@@ -1,7 +1,10 @@
-import { Schema, model } from 'mongoose';
-import { ForexRequest } from '../types/types.js';
+import { Schema, Document, model } from 'mongoose';
+import type {
+  IForexDataPointMongoose,
+  IForexRequestMongoose,
+} from '../types/types.js';
 
-const DataPointSchema = new Schema({
+const DataPointSchema = new Schema<IForexDataPointMongoose>({
   timestamp: {
     type: String,
     required: true,
@@ -9,7 +12,7 @@ const DataPointSchema = new Schema({
   value: { type: Number },
 });
 
-const ForexRequestSchema = new Schema(
+const ForexRequestSchema = new Schema<IForexRequestMongoose>(
   {
     data: {
       type: [DataPointSchema],
@@ -23,7 +26,7 @@ const ForexRequestSchema = new Schema(
   { timestamps: true }
 );
 
-export const ForexRequestModel = model<ForexRequest>(
+export const ForexRequestModel = model<IForexRequestMongoose>(
   'ForexRequest',
   ForexRequestSchema
 );
