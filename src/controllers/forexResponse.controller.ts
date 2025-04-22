@@ -18,3 +18,26 @@ export const findAllForexResponse = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Error finding all forex responses' });
   }
 };
+
+export const findByIDForexResponse = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const response = await ForexResponseService.findByID(id);
+
+    if (!response) {
+      return res
+        .status(404)
+        .json({ message: `No forex response found with id: ${id}` });
+    }
+
+    return res
+      .status(200)
+      .json({
+        message: `forex response found with id: ${id}`,
+        response: response,
+      });
+  } catch (error) {
+    console.error('Error forexResponseController findByID: ', error);
+    return res.status(500).json({ error: 'Error findind response with id' });
+  }
+};
