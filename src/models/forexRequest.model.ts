@@ -10,7 +10,7 @@ export default class ForexRequestService {
     }
   };
 
-  /*findByID = async (id: string) => {
+  findByID = async (id: string) => {
     try {
       return await ForexRequestModel.findById(id);
     } catch (error) {
@@ -18,7 +18,7 @@ export default class ForexRequestService {
     }
   };
 
-  create = async (request: ForexRequest) => {
+  /*create = async (request: ForexRequest) => {
     try {
       const created = await ForexRequestModel.create(request);
       return created;
