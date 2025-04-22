@@ -16,6 +16,10 @@ const ForexResponseSchema = new Schema(
       required: true,
     },
     predicted: {
+      type: [DataPointSchema],
+      required: true,
+    },
+    requestID: {
       type: String,
       required: true,
     },
