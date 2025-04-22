@@ -25,4 +25,13 @@ export default class ForexResponseServive {
       return console.error('Error ForexResponseModel findByRequestID: ', error);
     }
   };
+
+  create = async (response: ForexResponse) => {
+    try {
+      const created = await ForexResponseModel.create(response);
+      return created;
+    } catch (error) {
+      return console.error('Error ForexResponseModel create: ', error);
+    }
+  };
 }
