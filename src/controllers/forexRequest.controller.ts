@@ -14,7 +14,7 @@ export const findAllForexRequest = async (req: Request, res: Response) => {
       requests: requests,
     });
   } catch (error) {
-    console.error('Error forexRequestController findAll');
+    console.error('Error forexRequestController findAll ', error);
     return res.status(500).json({ error: 'Error finding all forex request' });
   }
 };
@@ -34,7 +34,20 @@ export const findByIDForexRequest = async (req: Request, res: Response) => {
       .status(200)
       .json({ message: `forex request foud with id: ${id}`, request: request });
   } catch (error) {
-    console.error('Error forexRequestController findByID');
+    console.error('Error forexRequestController findByID: ', error);
     return res.status(500).json({ error: 'Error finding forex request by id' });
+  }
+};
+
+export const createForexRequest = async (req: Request, res: Response) => {
+  try {
+    const newRequest = await ForexRequestService.create(req.body);
+    return res.status(201).json({
+      message: 'New forex request created sucessfully',
+      request: newRequest,
+    });
+  } catch (error) {
+    console.error('Error forexRequestController create: ', error);
+    return res.status(500).json({ error: 'Error creating forex request' });
   }
 };
