@@ -17,4 +17,12 @@ export default class ForexResponseServive {
       return console.error('Error ForexResponseModel findByID: ', error);
     }
   };
+
+  findByRequestID = async (requestID: string) => {
+    try {
+      return ForexResponseModel.find({ requestID });
+    } catch (error) {
+      return console.error('Error ForexResponseModel findByRequestID: ', error);
+    }
+  };
 }
