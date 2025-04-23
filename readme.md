@@ -191,5 +191,5 @@ Si deseas mejorar este proyecto, por favor:
 
 ---
 
-Desarrollado con ❤️ por **[Tu Nombre]**  
+Desarrollado con ❤️ por **[Mateo Baca]**  
 Cumpliendo los requisitos del curso de Modelamiento Numérico – Universidad de la Costa.
