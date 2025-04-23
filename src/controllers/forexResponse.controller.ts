@@ -82,7 +82,7 @@ export const createForexResponse: RequestHandler = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const requestID = req.params.requestID;
+    const requestID = req.body.requestID;
     const foundRequest = await ForexRequestService.findByID(requestID);
 
     if (!foundRequest) {
