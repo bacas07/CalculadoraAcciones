@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import ForexResponseService from '../models/forexResponse.model.js';
+import ForexRequestService from '../models/forexRequest.model.js';
+import { predictForex } from '../services/forex.service.js';
 
 export const findAllForexResponse = async (req: Request, res: Response) => {
   try {
@@ -27,7 +29,7 @@ export const findByIDForexResponse = async (req: Request, res: Response) => {
     if (!response) {
       return res
         .status(404)
-        .json({ message: `No forex response found with id: ${id}` });
+        .json({ error: `No forex response found with id: ${id}` });
     }
 
     return res.status(200).json({
@@ -51,7 +53,7 @@ export const findByRequestIDForexResponse = async (
     if (!responses) {
       return res
         .status(404)
-        .json({ message: `No forext responses found with Request id: ${id}` });
+        .json({ error: `No forext responses found with Request id: ${id}` });
     }
 
     return res.status(200).json({
@@ -60,6 +62,32 @@ export const findByRequestIDForexResponse = async (
     });
   } catch (error) {
     console.error('Error forexResponseController findByRequestID: ', error);
-    return res.status(500);
+    return res
+      .status(500)
+      .json({ error: 'Error finding responses whith request id' });
+  }
+};
+
+export const createForexResponse = async (req: Request, res: Response) => {
+  try {
+    const requestID = req.params.requestID;
+    const foundRequest = await ForexRequestService.findByID(requestID);
+
+    if (!foundRequest) {
+      return res
+        .status(404)
+        .json({ error: `No request found with id: ${requestID}` });
+    }
+
+    const prediction = predictForex(foundRequest);
+
+    const response = ForexResponseService.create(prediction);
+    return res.status(201).json({
+      message: `New forex response created sucessfully`,
+      response: response,
+    });
+  } catch (error) {
+    console.error('Error forexResponseController crate: ', error);
+    return res.status(500).json({ error: 'Error creating forex response' });
   }
 };

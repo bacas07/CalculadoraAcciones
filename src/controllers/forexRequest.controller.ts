@@ -27,7 +27,7 @@ export const findByIDForexRequest = async (req: Request, res: Response) => {
     if (!request) {
       return res
         .status(404)
-        .json({ message: `No request forex found with id: ${id}` });
+        .json({ error: `No request forex found with id: ${id}` });
     }
 
     return res.status(200).json({
@@ -61,7 +61,7 @@ export const deleteForexRequest = async (req: Request, res: Response) => {
     if (!deleteRequest) {
       return res
         .status(404)
-        .json({ message: `No request forex found with id: ${id}` });
+        .json({ error: `No request forex found with id: ${id}` });
     }
 
     return res.status(204).json({
