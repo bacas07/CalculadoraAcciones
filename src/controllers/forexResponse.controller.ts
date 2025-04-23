@@ -91,3 +91,24 @@ export const createForexResponse = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Error creating forex response' });
   }
 };
+
+export const deleteForexResponse = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const deleteResponse = await ForexResponseService.delete(id);
+
+    if (!deleteResponse) {
+      return res
+        .status(404)
+        .json({ error: `No response forex found with id: ${id}` });
+    }
+
+    return res.status(204).json({
+      message: 'Forex response deleted sucessfully',
+      response: deleteResponse,
+    });
+  } catch (error) {
+    console.error('Error forexResponseController delete: ', error);
+    return res.status(500).json({ error: 'Error deleting forex response' });
+  }
+};
