@@ -64,7 +64,7 @@ export const deleteForexRequest = async (req: Request, res: Response) => {
         .json({ error: `No request forex found with id: ${id}` });
     }
 
-    return res.status(204).json({
+    return res.status(200).json({
       message: 'Forex request deleted sucessfully',
       request: deleteRequest,
     });

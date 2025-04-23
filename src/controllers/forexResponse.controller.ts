@@ -81,7 +81,11 @@ export const createForexResponse = async (req: Request, res: Response) => {
 
     const prediction = predictForex(foundRequest);
 
-    const response = ForexResponseService.create(prediction);
+    if (!prediction) {
+      return res.status(500).json({ error: 'Prediction failed' });
+    }
+
+    const response = await ForexResponseService.create(prediction);
     return res.status(201).json({
       message: `New forex response created sucessfully`,
       response: response,
@@ -103,7 +107,7 @@ export const deleteForexResponse = async (req: Request, res: Response) => {
         .json({ error: `No response forex found with id: ${id}` });
     }
 
-    return res.status(204).json({
+    return res.status(200).json({
       message: 'Forex response deleted sucessfully',
       response: deleteResponse,
     });
