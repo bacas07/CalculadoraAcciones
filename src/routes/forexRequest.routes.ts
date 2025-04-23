@@ -6,11 +6,11 @@ import {
   deleteForexRequest,
 } from '../controllers/forexRequest.controller';
 
-const router = Router();
+const requestRouter = Router();
 
-router.get('/findall', findAllForexRequest);
-router.get('/findbyid/:id', findByIDForexRequest);
-router.post('/create', createForexRequest);
-router.delete('/delete/:id', deleteForexRequest);
+requestRouter.get('/findall', findAllForexRequest);
+requestRouter.get('/findbyid/:id', findByIDForexRequest);
+requestRouter.post('/create', createForexRequest);
+requestRouter.delete('/delete/:id', deleteForexRequest);
 
-export default router;
+export default requestRouter;
