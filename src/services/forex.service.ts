@@ -1,8 +1,7 @@
 import { mean, subtract, multiply, sum } from 'mathjs';
-import { parseTimeRange, addTimeToDate } from '../utils/dateUtils';
+import { parseTimeRange, addTimeToDate } from '../utils/dateUtils.js';
 import {
   IForexDataPoint,
-  IForexRequest,
   IForexResponse,
   IForexRequestMongoose,
 } from '../types/types.js';

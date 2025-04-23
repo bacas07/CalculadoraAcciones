@@ -8,21 +8,21 @@ const server = express();
 
 server.use(express.json());
 
-server.use('/', (req: Request, res: Response) => {
+server.get('/', (req: Request, res: Response) => {
   res.status(200).json({ message: 'Welcome to Forex Predict' });
 });
 
-server.use('/api/forex-request', requestRouter);
-server.use('/api/forex-response', responseRouter);
+server.use('/forex-request', requestRouter);
+server.use('/forex-response', responseRouter);
 
 const startingServer = async () => {
   try {
     await connectDB();
     server.listen(PORT, () => {
-      console.log('> Servidor activo en el puerto:', PORT, '(❁´◡`❁)');
+      console.log(`> Servidor activo en el puerto: ${PORT}`);
     });
   } catch (error) {
-    console.error('> Error activando el servidor (っ °Д °;)っ');
+    console.error('> Error activando el servidor: ', error);
     process.exit(1);
   }
 };

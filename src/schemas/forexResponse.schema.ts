@@ -1,4 +1,4 @@
-import { Schema, Document, model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import type {
   IForexDataPointMongoose,
   IForexResponseMongoose,
@@ -31,6 +31,6 @@ const ForexResponseSchema = new Schema<IForexResponseMongoose>(
 );
 
 export const ForexResponseModel = model<IForexResponseMongoose>(
-  'ForexRequest',
+  'ForexResponse',
   ForexResponseSchema
 );

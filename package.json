@@ -20,8 +20,9 @@
   "main": "./dist/server.js",
   "type": "module",
   "scripts": {
+    "build": "tsc",
     "dev": "npx tsc --watch",
-    "start": "node dist/server.js"
+    "start": "npm run build && node dist/server.js"
   },
   "keywords": [],
   "author": "",

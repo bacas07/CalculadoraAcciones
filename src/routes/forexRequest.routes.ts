@@ -4,7 +4,7 @@ import {
   findByIDForexRequest,
   createForexRequest,
   deleteForexRequest,
-} from '../controllers/forexRequest.controller';
+} from '../controllers/forexRequest.controller.js';
 
 const requestRouter = Router();
 

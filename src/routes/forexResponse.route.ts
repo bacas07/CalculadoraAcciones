@@ -5,7 +5,7 @@ import {
   findByRequestIDForexResponse,
   createForexResponse,
   deleteForexResponse,
-} from '../controllers/forexResponse.controller';
+} from '../controllers/forexResponse.controller.js';
 
 const responseRouter = Router();
 
