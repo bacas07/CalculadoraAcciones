@@ -55,6 +55,13 @@ export const createForexRequest: RequestHandler = async (
 ): Promise<void> => {
   try {
     const newRequest = await ForexRequestService.create(req.body);
+
+    // Agregando return de un error ya que aun no hay validacion de datos de entreda
+    if (!newRequest) {
+      res.status(500).json({ error: 'Error creating forex request' });
+      return;
+    }
+
     res.status(201).json({
       message: 'New forex request created sucessfully',
       request: newRequest,
