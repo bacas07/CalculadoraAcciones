@@ -19,3 +19,19 @@ export const parseStockData = (apiData: any): IStockDataPoint[] => {
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
 };
+
+export const parseSingleStock = (apiData: {
+  date: string;
+  data: any;
+}): IStockDataPoint => {
+  const { date, data } = apiData;
+
+  return {
+    date,
+    open: parseFloat(data['1. open']),
+    high: parseFloat(data['2. high']),
+    low: parseFloat(data['3. low']),
+    close: parseFloat(data['4. close']),
+    volume: parseFloat(data['5. volume']),
+  };
+};

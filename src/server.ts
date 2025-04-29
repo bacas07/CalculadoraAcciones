@@ -4,7 +4,10 @@ import requestRouter from './routes/forexRequest.routes.js';
 import responseRouter from './routes/forexResponse.route.js';
 
 // Testing new features
-import { fetchHistoricalData } from './services/fetchingData.service.js';
+import {
+  fetchHistoricalData,
+  fetchPreviousDayData,
+} from './services/fetchingData.service.js';
 import { parseStockData } from './services/parseStockData.service.js';
 
 const PORT = process.env.PORT || 5000;
@@ -43,6 +46,18 @@ const parsing = async () => {
   console.log(points);
 };
 
-parsing();
+const parsingLatest = async () => {
+  const data = await fetchPreviousDayData();
+
+  if (!data) {
+    console.warn('No se encontro informacion para el dia anterior: ', data);
+    return;
+  }
+
+  const points = parseStockData(data);
+  console.log(points);
+};
+
+parsingLatest();
 
 startingServer();
