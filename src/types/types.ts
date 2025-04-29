@@ -33,3 +33,12 @@ export interface IForexResponseMongoose extends Document {
   predicted: IForexDataPointMongoose[];
   requestID: string;
 }
+
+export interface IStockDataPoint {
+  date: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+}
