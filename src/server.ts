@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { connectDB } from './database/mongo.js';
 import requestRouter from './routes/forexRequest.routes.js';
 import responseRouter from './routes/forexResponse.route.js';
+import { fetchHistoricalData } from './services/fetchingData.service.js';
 
 const PORT = process.env.PORT || 5000;
 const server = express();
@@ -26,5 +27,7 @@ const startingServer = async () => {
     process.exit(1);
   }
 };
+
+fetchHistoricalData();
 
 startingServer();
