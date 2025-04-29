@@ -42,3 +42,12 @@ export interface IStockDataPoint {
   close: number;
   volume: number;
 }
+
+export interface IStockDataPointMongoose extends Document {
+  date: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+}
