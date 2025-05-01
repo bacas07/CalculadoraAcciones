@@ -8,7 +8,10 @@ import {
   fetchHistoricalData,
   fetchPreviousDayData,
 } from './services/fetchingData.service.js';
-import { parseStockData, parseSingleStock } from './services/parseStockData.service.js';
+import {
+  parseStockData,
+  parseSingleStock,
+} from './services/parseStockData.service.js';
 
 const PORT = process.env.PORT || 5000;
 const server = express();
@@ -46,6 +49,8 @@ const parsing = async () => {
   console.log(points);
 };
 
+parsing();
+
 const parsingLatest = async () => {
   const data = await fetchPreviousDayData();
 
@@ -58,6 +63,6 @@ const parsingLatest = async () => {
   console.log(point);
 };
 
-parsingLatest();
+// parsingLatest();
 
 startingServer();

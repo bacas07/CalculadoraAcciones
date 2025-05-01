@@ -8,7 +8,6 @@ export const fetchHistoricalData = async (): Promise<any> => {
     const res = await axios.get(
       `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=${process.env.ALPHA_VANTAGE_API_KEY}`
     );
-    console.log('status: ', res.status, '\ndata: ', res.data);
     return res.data;
   } catch (error) {
     console.error('Error  fetching historical data: ', error);

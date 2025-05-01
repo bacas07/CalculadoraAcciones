@@ -28,7 +28,7 @@ const StockDataSchema = new Schema<IStockDataPointMongoose>({
   },
 });
 
-export const ForexResponseModel = model<IStockDataPointMongoose>(
+export const StockDataModel = model<IStockDataPointMongoose>(
   'StockData',
   StockDataSchema
 );
