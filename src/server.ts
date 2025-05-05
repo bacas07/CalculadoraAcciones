@@ -49,7 +49,7 @@ const parsing = async () => {
   console.log(points);
 };
 
-parsing();
+// parsing();
 
 const parsingLatest = async () => {
   const data = await fetchPreviousDayData();
