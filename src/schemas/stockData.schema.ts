@@ -1,5 +1,8 @@
 import { Schema, model } from 'mongoose';
-import type { IStockDataPointMongoose } from '../types/types.js';
+import type {
+  IStockDataPoint,
+  IStockDataPointMongoose,
+} from '../types/types.js';
 
 const StockDataSchema = new Schema<IStockDataPointMongoose>({
   date: {
@@ -28,7 +31,17 @@ const StockDataSchema = new Schema<IStockDataPointMongoose>({
   },
 });
 
-export const StockDataModel = model<IStockDataPointMongoose>(
-  'StockData',
+export const EurUsdModel = model<IStockDataPointMongoose>(
+  'EurUsd',
+  StockDataSchema
+);
+
+export const UsdJpyModel = model<IStockDataPointMongoose>(
+  'UsdJpy',
+  StockDataSchema
+);
+
+export const GbpUsdModel = model<IStockDataPointMongoose>(
+  'BgpUsd',
   StockDataSchema
 );
