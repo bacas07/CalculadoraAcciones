@@ -2,7 +2,7 @@ import { EurUsdModel } from '../schemas/stockData.schema.js';
 import type { IStockDataPoint } from '../types/types.js';
 import { Types } from 'mongoose';
 
-export class EurUsdService {
+export default class EurUsdService {
   async getAll(): Promise<IStockDataPoint[] | null> {
     try {
       const result = await EurUsdModel.find();
@@ -64,6 +64,11 @@ export class EurUsdService {
 
     try {
       const deleted = await EurUsdModel.findByIdAndDelete(id);
+
+      if (!deleted) {
+        throw new Error(`No se encontraron registros para el id: ${id}`);
+      }
+
       return deleted;
     } catch (error) {
       throw new Error(
