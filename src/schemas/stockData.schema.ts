@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
 import type {
-  IStockDataPoint,
   IStockDataPointMongoose,
+  IStockDataPoint,
 } from '../types/types.js';
 
 const StockDataSchema = new Schema<IStockDataPointMongoose>({
@@ -31,17 +31,8 @@ const StockDataSchema = new Schema<IStockDataPointMongoose>({
   },
 });
 
-export const EurUsdModel = model<IStockDataPointMongoose>(
-  'EurUsd',
-  StockDataSchema
-);
+export const EurUsdModel = model<IStockDataPoint>('EurUsd', StockDataSchema);
 
-export const UsdJpyModel = model<IStockDataPointMongoose>(
-  'UsdJpy',
-  StockDataSchema
-);
+export const UsdJpyModel = model<IStockDataPoint>('UsdJpy', StockDataSchema);
 
-export const GbpUsdModel = model<IStockDataPointMongoose>(
-  'BgpUsd',
-  StockDataSchema
-);
+export const GbpUsdModel = model<IStockDataPoint>('BgpUsd', StockDataSchema);
