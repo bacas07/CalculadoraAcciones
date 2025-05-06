@@ -3,9 +3,11 @@ import type { IStockDataPoint } from '../types/types.js';
 import { Types } from 'mongoose';
 
 export default class EurUsdService {
+  private service = EurUsdModel;
+
   async getAll(): Promise<IStockDataPoint[] | null> {
     try {
-      const result = await EurUsdModel.find();
+      const result = await this.service.find();
 
       if (!result) throw new Error('No se encontraron registros para EurUsd');
 
@@ -21,7 +23,7 @@ export default class EurUsdService {
     }
 
     try {
-      const result = await EurUsdModel.findById(id);
+      const result = await this.service.findById(id);
 
       if (!result) {
         throw new Error(`No se encontraron registros para el id: ${id}`);
@@ -37,7 +39,7 @@ export default class EurUsdService {
 
   async createOne(data: IStockDataPoint): Promise<IStockDataPoint | null> {
     try {
-      const created = await EurUsdModel.create(data);
+      const created = await this.service.create(data);
       return created;
     } catch (error) {
       throw new Error(
@@ -48,7 +50,7 @@ export default class EurUsdService {
 
   async createMany(data: IStockDataPoint[]): Promise<IStockDataPoint[] | null> {
     try {
-      const inserted = await EurUsdModel.insertMany(data, { ordered: false });
+      const inserted = await this.service.insertMany(data, { ordered: false });
       return inserted;
     } catch (error) {
       throw new Error(
@@ -63,7 +65,7 @@ export default class EurUsdService {
     }
 
     try {
-      const deleted = await EurUsdModel.findByIdAndDelete(id);
+      const deleted = await this.service.findByIdAndDelete(id);
 
       if (!deleted) {
         throw new Error(`No se encontraron registros para el id: ${id}`);

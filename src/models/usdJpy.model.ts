@@ -3,9 +3,11 @@ import type { IStockDataPoint } from '../types/types.js';
 import { Types } from 'mongoose';
 
 export default class UsdJpyService {
+  private service = UsdJpyModel;
+
   async getAll(): Promise<IStockDataPoint[] | null> {
     try {
-      const result = await UsdJpyModel.find();
+      const result = await this.service.find();
 
       if (!result) {
         throw new Error('No se encontraron registros para UsdJpy');
@@ -23,7 +25,7 @@ export default class UsdJpyService {
     }
 
     try {
-      const result = await UsdJpyModel.findById(id);
+      const result = await this.service.findById(id);
 
       if (!result) {
         throw new Error(`No se encontraron registros para el id: ${id}`);
@@ -39,7 +41,7 @@ export default class UsdJpyService {
 
   async createOne(data: IStockDataPoint): Promise<IStockDataPoint | null> {
     try {
-      const created = await UsdJpyModel.create(data);
+      const created = await this.service.create(data);
       return created;
     } catch (error) {
       throw new Error(
@@ -65,7 +67,7 @@ export default class UsdJpyService {
     }
 
     try {
-      const deleted = await UsdJpyModel.findByIdAndDelete(id);
+      const deleted = await this.service.findByIdAndDelete(id);
 
       if (!deleted) {
         throw new Error(`No se encontraron registros para el id: ${id}`);
