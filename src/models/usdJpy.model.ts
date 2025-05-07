@@ -2,12 +2,12 @@ import { EurUsdModel, UsdJpyModel } from '../schemas/stockData.schema.js';
 import type { IStockDataPoint } from '../types/types.js';
 import { Types } from 'mongoose';
 
-export default class UsdJpyService {
-  private service = UsdJpyModel;
+class UsdJpyService {
+  private model = UsdJpyModel;
 
   async getAll(): Promise<IStockDataPoint[] | null> {
     try {
-      const result = await this.service.find();
+      const result = await this.model.find();
 
       if (!result) {
         throw new Error('No se encontraron registros para UsdJpy');
@@ -20,12 +20,12 @@ export default class UsdJpyService {
   }
 
   async getByID(id: string): Promise<IStockDataPoint | null> {
-    if (!Types.ObjectId.isValid(id)) {
-      throw new Error(`Id invalido: ${id}`);
-    }
-
     try {
-      const result = await this.service.findById(id);
+      if (!Types.ObjectId.isValid(id)) {
+        throw new Error(`Id invalido: ${id}`);
+      }
+
+      const result = await this.model.findById(id);
 
       if (!result) {
         throw new Error(`No se encontraron registros para el id: ${id}`);
@@ -41,7 +41,7 @@ export default class UsdJpyService {
 
   async createOne(data: IStockDataPoint): Promise<IStockDataPoint | null> {
     try {
-      const created = await this.service.create(data);
+      const created = await this.model.create(data);
       return created;
     } catch (error) {
       throw new Error(
@@ -62,12 +62,11 @@ export default class UsdJpyService {
   }
 
   async deleteOne(id: string): Promise<IStockDataPoint | null> {
-    if (!Types.ObjectId.isValid(id)) {
-      throw new Error(`ID invalido: ${id}`);
-    }
-
     try {
-      const deleted = await this.service.findByIdAndDelete(id);
+      if (!Types.ObjectId.isValid(id)) {
+        throw new Error(`Id invalido: ${id}`);
+      }
+      const deleted = await this.model.findByIdAndDelete(id);
 
       if (!deleted) {
         throw new Error(`No se encontraron registros para el id: ${id}`);
@@ -81,3 +80,5 @@ export default class UsdJpyService {
     }
   }
 }
+
+export default new UsdJpyModel();

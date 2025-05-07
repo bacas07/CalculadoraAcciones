@@ -2,12 +2,12 @@ import { EurUsdModel } from '../schemas/stockData.schema.js';
 import type { IStockDataPoint } from '../types/types.js';
 import { Types } from 'mongoose';
 
-export default class EurUsdService {
-  private service = EurUsdModel;
+class EurUsdService {
+  private model = EurUsdModel;
 
   async getAll(): Promise<IStockDataPoint[] | null> {
     try {
-      const result = await this.service.find();
+      const result = await this.model.find();
 
       if (!result) throw new Error('No se encontraron registros para EurUsd');
 
@@ -18,12 +18,12 @@ export default class EurUsdService {
   }
 
   async getById(id: string): Promise<IStockDataPoint | null> {
-    if (!Types.ObjectId.isValid(id)) {
-      throw new Error(`ID invalido: ${id}`);
-    }
-
     try {
-      const result = await this.service.findById(id);
+      if (!Types.ObjectId.isValid(id)) {
+        throw new Error(`ID invalido: ${id}`);
+      }
+
+      const result = await this.model.findById(id);
 
       if (!result) {
         throw new Error(`No se encontraron registros para el id: ${id}`);
@@ -39,7 +39,7 @@ export default class EurUsdService {
 
   async createOne(data: IStockDataPoint): Promise<IStockDataPoint | null> {
     try {
-      const created = await this.service.create(data);
+      const created = await this.model.create(data);
       return created;
     } catch (error) {
       throw new Error(
@@ -50,7 +50,7 @@ export default class EurUsdService {
 
   async createMany(data: IStockDataPoint[]): Promise<IStockDataPoint[] | null> {
     try {
-      const inserted = await this.service.insertMany(data, { ordered: false });
+      const inserted = await this.model.insertMany(data, { ordered: false });
       return inserted;
     } catch (error) {
       throw new Error(
@@ -60,12 +60,12 @@ export default class EurUsdService {
   }
 
   async deleteOne(id: string): Promise<IStockDataPoint | null> {
-    if (!Types.ObjectId.isValid(id)) {
-      throw new Error(`ID invalido: ${id}`);
-    }
-
     try {
-      const deleted = await this.service.findByIdAndDelete(id);
+      if (!Types.ObjectId.isValid(id)) {
+        throw new Error(`ID invalido: ${id}`);
+      }
+
+      const deleted = await this.model.findByIdAndDelete(id);
 
       if (!deleted) {
         throw new Error(`No se encontraron registros para el id: ${id}`);
@@ -79,3 +79,5 @@ export default class EurUsdService {
     }
   }
 }
+
+export default new EurUsdService();
