@@ -19,7 +19,7 @@ class GbpUsdService {
     }
   }
 
-  async getOneById(id: string): Promise<IStockDataPoint | null> {
+  async getById(id: string): Promise<IStockDataPoint | null> {
     try {
       if (!Types.ObjectId.isValid(id)) {
         throw new Error(`ID invalido: ${id}`);
