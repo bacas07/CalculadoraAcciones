@@ -19,7 +19,7 @@ class UsdJpyService {
     }
   }
 
-  async getByID(id: string): Promise<IStockDataPoint | null> {
+  async getById(id: string): Promise<IStockDataPoint | null> {
     try {
       if (!Types.ObjectId.isValid(id)) {
         throw new Error(`Id invalido: ${id}`);
@@ -81,4 +81,4 @@ class UsdJpyService {
   }
 }
 
-export default new UsdJpyModel();
+export default new UsdJpyService();
