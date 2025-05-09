@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { connectDB } from './database/mongo.js';
 import requestRouter from './routes/forexRequest.routes.js';
-import responseRouter from './routes/forexResponse.route.js';
+import responseRouter from './routes/forexResponse.routes.js';
 
 // Testing new features
 import {

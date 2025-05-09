@@ -4,7 +4,7 @@ import { parse } from 'valibot';
 import { stockDataPointSchemaValibot } from '../validators/stockDataPoint.validator.js';
 import { IStockDataPoint } from '../types/types.js';
 
-export default class EurUsdController {
+class EurUsdController {
   private service = EurUsdService;
 
   async getAll(req: Request, res: Response, next: NextFunction) {
@@ -65,3 +65,5 @@ export default class EurUsdController {
     }
   }
 }
+
+export default new EurUsdController();
