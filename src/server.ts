@@ -6,6 +6,9 @@ import EurUsdRouter from './routes/eurUsd.routes.js';
 import GbpUsdRouter from './routes/gbpUsd.routes.js';
 import UsdJpyRouter from './routes/UsdJpy.routes.js';
 
+// Error handler
+import { errorHandler } from './middlewares/custom/errorHandler.js';
+
 // Middlewares externos
 import cors from './middlewares/external/cors.js';
 import helmet from './middlewares/external/helmet.js';
@@ -44,6 +47,8 @@ server.use('/forex-response', responseRouter);
 server.use('/eurusd', EurUsdRouter);
 server.use('/gbpusd', GbpUsdRouter);
 server.use('/usdjpy', UsdJpyRouter);
+
+server.use(errorHandler);
 
 const startingServer = async () => {
   try {
