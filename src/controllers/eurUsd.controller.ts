@@ -3,6 +3,7 @@ import EurUsdService from '../models/eurUsd.model.js';
 import { parse } from 'valibot';
 import { stockDataPointSchemaValibot } from '../validators/stockDataPoint.validator.js';
 import { IStockDataPoint } from '../types/types.js';
+import ApiError from '../errors/apiError.js'; // Importamos ApiError
 
 class EurUsdController {
   private service = EurUsdService;
@@ -12,7 +13,7 @@ class EurUsdController {
       const data = await this.service.getAll();
       return res.json(data);
     } catch (error) {
-      next(error);
+      next(error); // Ya no es necesario transformar el error, el middleware lo hará
     }
   }
 
@@ -28,12 +29,22 @@ class EurUsdController {
 
   async createOne(req: Request, res: Response, next: NextFunction) {
     try {
-      const validData = parse(
-        stockDataPointSchemaValibot,
-        req.body
-      ) as IStockDataPoint;
-      const created = await this.service.createOne(validData);
-      return res.status(201).json(created);
+      // Manejamos los errores de validación
+      try {
+        const validData = parse(
+          stockDataPointSchemaValibot,
+          req.body
+        ) as IStockDataPoint;
+        const created = await this.service.createOne(validData);
+        return res.status(201).json(created);
+      } catch (validationError) {
+        // Capture los errores de validación específicamente
+        throw new ApiError(
+          'Error de validación en los datos',
+          400,
+          validationError
+        );
+      }
     } catch (error) {
       next(error);
     }
@@ -42,14 +53,22 @@ class EurUsdController {
   async createMany(req: Request, res: Response, next: NextFunction) {
     try {
       if (!Array.isArray(req.body)) {
-        throw new Error('Se espera un arreglo de objetos');
+        throw new ApiError('Se espera un arreglo de objetos', 400);
       }
 
-      const validData: IStockDataPoint[] = (req.body as unknown[]).map(
-        (item) => parse(stockDataPointSchemaValibot, item) as IStockDataPoint
-      );
-      const inserted = await this.service.createMany(validData);
-      return res.status(201).json(inserted);
+      try {
+        const validData: IStockDataPoint[] = (req.body as unknown[]).map(
+          (item) => parse(stockDataPointSchemaValibot, item) as IStockDataPoint
+        );
+        const inserted = await this.service.createMany(validData);
+        return res.status(201).json(inserted);
+      } catch (validationError) {
+        throw new ApiError(
+          'Error de validación en los datos del arreglo',
+          400,
+          validationError
+        );
+      }
     } catch (error) {
       next(error);
     }

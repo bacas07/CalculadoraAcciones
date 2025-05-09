@@ -1,6 +1,7 @@
-import { EurUsdModel, UsdJpyModel } from '../schemas/stockData.schema.js';
+import { UsdJpyModel } from '../schemas/stockData.schema.js'; // Corregí la importación para usar solo UsdJpyModel
 import type { IStockDataPoint } from '../types/types.js';
 import { Types } from 'mongoose';
+import ApiError from '../errors/apiError.js'; // Importamos ApiError con el nombre corregido
 
 class UsdJpyService {
   private model = UsdJpyModel;
@@ -10,31 +11,44 @@ class UsdJpyService {
       const result = await this.model.find();
 
       if (!result) {
-        throw new Error('No se encontraron registros para UsdJpy');
+        throw new ApiError('No se encontraron registros para UsdJpy', 404);
       }
 
       return result;
     } catch (error) {
-      throw new Error(`Error UsdJpy model getAll: ${(error as Error).message}`);
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw new ApiError(
+        `Error UsdJpy model getAll: ${(error as Error).message}`,
+        500
+      );
     }
   }
 
   async getById(id: string): Promise<IStockDataPoint | null> {
     try {
       if (!Types.ObjectId.isValid(id)) {
-        throw new Error(`Id invalido: ${id}`);
+        throw new ApiError(`Id invalido: ${id}`, 400);
       }
 
       const result = await this.model.findById(id);
 
       if (!result) {
-        throw new Error(`No se encontraron registros para el id: ${id}`);
+        throw new ApiError(
+          `No se encontraron registros para el id: ${id}`,
+          404
+        );
       }
 
       return result;
     } catch (error) {
-      throw new Error(
-        `Error UsdJpy model getById: ${(error as Error).message}`
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw new ApiError(
+        `Error UsdJpy model getById: ${(error as Error).message}`,
+        500
       );
     }
   }
@@ -44,19 +58,24 @@ class UsdJpyService {
       const created = await this.model.create(data);
       return created;
     } catch (error) {
-      throw new Error(
-        `Error UsdJpy model createOne: ${(error as Error).message}`
+      throw new ApiError(
+        `Error UsdJpy model createOne: ${(error as Error).message}`,
+        500,
+        error
       );
     }
   }
 
   async createMany(data: IStockDataPoint[]): Promise<IStockDataPoint[] | null> {
     try {
-      const inserted = await EurUsdModel.insertMany(data, { ordered: false });
+      // Corregí esto para usar this.model en lugar de EurUsdModel
+      const inserted = await this.model.insertMany(data, { ordered: false });
       return inserted;
     } catch (error) {
-      throw new Error(
-        `Error UsdJpy model createMany: ${(error as Error).message}`
+      throw new ApiError(
+        `Error UsdJpy model createMany: ${(error as Error).message}`,
+        500,
+        error
       );
     }
   }
@@ -64,18 +83,26 @@ class UsdJpyService {
   async deleteOne(id: string): Promise<IStockDataPoint | null> {
     try {
       if (!Types.ObjectId.isValid(id)) {
-        throw new Error(`Id invalido: ${id}`);
+        throw new ApiError(`Id invalido: ${id}`, 400);
       }
+
       const deleted = await this.model.findByIdAndDelete(id);
 
       if (!deleted) {
-        throw new Error(`No se encontraron registros para el id: ${id}`);
+        throw new ApiError(
+          `No se encontraron registros para el id: ${id}`,
+          404
+        );
       }
 
       return deleted;
     } catch (error) {
-      throw new Error(
-        `Error UsdJpy model deleteOne: ${(error as Error).message}`
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw new ApiError(
+        `Error UsdJpy model deleteOne: ${(error as Error).message}`,
+        500
       );
     }
   }

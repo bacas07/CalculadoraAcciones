@@ -3,6 +3,7 @@ import UsdJpyService from '../models/usdJpy.model.js';
 import { parse } from 'valibot';
 import { stockDataPointSchemaValibot } from '../validators/stockDataPoint.validator.js';
 import { IStockDataPoint } from '../types/types.js';
+import ApiError from '../errors/apiError.js'; // Importamos ApiError con el nombre corregido
 
 class UsdJpyController {
   private service = UsdJpyService;
@@ -28,12 +29,20 @@ class UsdJpyController {
 
   async createOne(req: Request, res: Response, next: NextFunction) {
     try {
-      const validData = parse(
-        stockDataPointSchemaValibot,
-        req.body
-      ) as IStockDataPoint;
-      const created = await this.service.createOne(validData);
-      return res.status(201).json(created);
+      try {
+        const validData = parse(
+          stockDataPointSchemaValibot,
+          req.body
+        ) as IStockDataPoint;
+        const created = await this.service.createOne(validData);
+        return res.status(201).json(created);
+      } catch (validationError) {
+        throw new ApiError(
+          'Error de validación en los datos',
+          400,
+          validationError
+        );
+      }
     } catch (error) {
       next(error);
     }
@@ -42,14 +51,22 @@ class UsdJpyController {
   async createMany(req: Request, res: Response, next: NextFunction) {
     try {
       if (!Array.isArray(req.body)) {
-        throw new Error('Se espera un arreglo de objetos');
+        throw new ApiError('Se espera un arreglo de objetos', 400);
       }
 
-      const validData: IStockDataPoint[] = (req.body as unknown[]).map(
-        (item) => parse(stockDataPointSchemaValibot, item) as IStockDataPoint
-      );
-      const inserted = await this.service.createMany(validData);
-      return res.status(201).json(inserted);
+      try {
+        const validData: IStockDataPoint[] = (req.body as unknown[]).map(
+          (item) => parse(stockDataPointSchemaValibot, item) as IStockDataPoint
+        );
+        const inserted = await this.service.createMany(validData);
+        return res.status(201).json(inserted);
+      } catch (validationError) {
+        throw new ApiError(
+          'Error de validación en los datos del arreglo',
+          400,
+          validationError
+        );
+      }
     } catch (error) {
       next(error);
     }

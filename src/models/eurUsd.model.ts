@@ -1,6 +1,7 @@
 import { EurUsdModel } from '../schemas/stockData.schema.js';
 import type { IStockDataPoint } from '../types/types.js';
 import { Types } from 'mongoose';
+import ApiError from '../errors/apiError.js'; // Importamos ApiError
 
 class EurUsdService {
   private model = EurUsdModel;
@@ -9,30 +10,45 @@ class EurUsdService {
     try {
       const result = await this.model.find();
 
-      if (!result) throw new Error('No se encontraron registros para EurUsd');
+      if (!result) {
+        throw new ApiError('No se encontraron registros para EurUsd', 404);
+      }
 
       return result;
     } catch (error) {
-      throw new Error(`Error EurUsd model getAll: ${(error as Error).message}`);
+      if (error instanceof ApiError) {
+        throw error; // Propagamos el ApiError directamente
+      }
+      throw new ApiError(
+        `Error EurUsd model getAll: ${(error as Error).message}`,
+        500
+      );
     }
   }
 
   async getById(id: string): Promise<IStockDataPoint | null> {
     try {
       if (!Types.ObjectId.isValid(id)) {
-        throw new Error(`ID invalido: ${id}`);
+        throw new ApiError(`ID invalido: ${id}`, 400);
       }
 
       const result = await this.model.findById(id);
 
       if (!result) {
-        throw new Error(`No se encontraron registros para el id: ${id}`);
+        throw new ApiError(
+          `No se encontraron registros para el id: ${id}`,
+          404
+        );
       }
 
       return result;
     } catch (error) {
-      throw new Error(
-        `Error EurUsd model getById: ${(error as Error).message}`
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw new ApiError(
+        `Error EurUsd model getById: ${(error as Error).message}`,
+        500
       );
     }
   }
@@ -42,8 +58,9 @@ class EurUsdService {
       const created = await this.model.create(data);
       return created;
     } catch (error) {
-      throw new Error(
-        `Error EurUsd model createOne: ${(error as Error).message}`
+      throw new ApiError(
+        `Error EurUsd model createOne: ${(error as Error).message}`,
+        500
       );
     }
   }
@@ -53,8 +70,10 @@ class EurUsdService {
       const inserted = await this.model.insertMany(data, { ordered: false });
       return inserted;
     } catch (error) {
-      throw new Error(
-        `Error EurUsd model createMany: ${(error as Error).message}`
+      throw new ApiError(
+        `Error EurUsd model createMany: ${(error as Error).message}`,
+        500,
+        error
       );
     }
   }
@@ -62,19 +81,26 @@ class EurUsdService {
   async deleteOne(id: string): Promise<IStockDataPoint | null> {
     try {
       if (!Types.ObjectId.isValid(id)) {
-        throw new Error(`ID invalido: ${id}`);
+        throw new ApiError(`ID invalido: ${id}`, 400);
       }
 
       const deleted = await this.model.findByIdAndDelete(id);
 
       if (!deleted) {
-        throw new Error(`No se encontraron registros para el id: ${id}`);
+        throw new ApiError(
+          `No se encontraron registros para el id: ${id}`,
+          404
+        );
       }
 
       return deleted;
     } catch (error) {
-      throw new Error(
-        `Error EurUsd model deleteOne: ${(error as Error).message}`
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw new ApiError(
+        `Error EurUsd model deleteOne: ${(error as Error).message}`,
+        500
       );
     }
   }
