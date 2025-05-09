@@ -6,6 +6,11 @@ import EurUsdRouter from './routes/eurUsd.routes.js';
 import GbpUsdRouter from './routes/gbpUsd.routes.js';
 import UsdJpyRouter from './routes/UsdJpy.routes.js';
 
+// Middlewares externos
+import cors from './middlewares/external/cors.js';
+import helmet from './middlewares/external/helmet.js';
+import morgan from './middlewares/external/morgan.js';
+
 // Testing new features
 import {
   fetchHistoricalData,
@@ -19,7 +24,13 @@ import {
 const PORT = process.env.PORT || 5000;
 const server = express();
 
+// Lectuta de json para nuestra aplicacion
 server.use(express.json());
+
+// Implementacion de middlewares
+server.use(cors);
+server.use(helmet);
+server.use(morgan);
 
 server.get('/', (req: Request, res: Response) => {
   res.status(200).json({ message: 'Welcome to Forex Predict' });
