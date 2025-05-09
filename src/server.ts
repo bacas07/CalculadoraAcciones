@@ -42,7 +42,7 @@ server.use('/forex-response', responseRouter);
 
 // Rutas nuevas para predicciones reales
 server.use('/eurusd', EurUsdRouter);
-server.use('/gpbusd', GbpUsdRouter);
+server.use('/gbpusd', GbpUsdRouter);
 server.use('/usdjpy', UsdJpyRouter);
 
 const startingServer = async () => {

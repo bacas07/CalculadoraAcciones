@@ -9,11 +9,6 @@ class UsdJpyService {
   async getAll(): Promise<IStockDataPoint[] | null> {
     try {
       const result = await this.model.find();
-
-      if (!result) {
-        throw new ApiError('No se encontraron registros para UsdJpy', 404);
-      }
-
       return result;
     } catch (error) {
       if (error instanceof ApiError) {

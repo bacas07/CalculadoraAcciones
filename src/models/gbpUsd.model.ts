@@ -9,11 +9,6 @@ class GbpUsdService {
   async getAll(): Promise<IStockDataPoint[] | null> {
     try {
       const result = await this.model.find();
-
-      if (!result) {
-        throw new ApiError('No se encontraron registros para GbpUsd', 404);
-      }
-
       return result;
     } catch (error) {
       if (error instanceof ApiError) {
