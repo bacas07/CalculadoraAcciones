@@ -2,6 +2,9 @@ import express, { Request, Response } from 'express';
 import { connectDB } from './database/mongo.js';
 import requestRouter from './routes/forexRequest.routes.js';
 import responseRouter from './routes/forexResponse.routes.js';
+import EurUsdRouter from './routes/eurUsd.routes.js';
+import GbpUsdRouter from './routes/gbpUsd.routes.js';
+import UsdJpyRouter from './routes/UsdJpy.routes.js';
 
 // Testing new features
 import {
@@ -22,8 +25,14 @@ server.get('/', (req: Request, res: Response) => {
   res.status(200).json({ message: 'Welcome to Forex Predict' });
 });
 
+// Rutas antiguas sin funcionalidad en el nuevo codigo
 server.use('/forex-request', requestRouter);
 server.use('/forex-response', responseRouter);
+
+// Rutas nuevas para predicciones reales
+server.use('/eurusd', EurUsdRouter);
+server.use('/gpbusd', GbpUsdRouter);
+server.use('/usdjpy', UsdJpyRouter);
 
 const startingServer = async () => {
   try {
@@ -37,6 +46,7 @@ const startingServer = async () => {
   }
 };
 
+// funcion principal para obtener el historico de datos completos
 const parsing = async () => {
   const data = await fetchHistoricalData();
 
@@ -51,6 +61,7 @@ const parsing = async () => {
 
 // parsing();
 
+// Funcion para obtener el valor del dia anterior
 const parsingLatest = async () => {
   const data = await fetchPreviousDayData();
 
