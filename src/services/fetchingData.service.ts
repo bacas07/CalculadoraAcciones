@@ -1,17 +1,34 @@
 import axios from 'axios';
 import { config } from 'dotenv';
+import ApiError from '../errors/apiError.js';
 
 config();
 
-export const fetchHistoricalData = async (): Promise<any> => {
+export const fetchHistoricalData = async (
+  fromSymbol: string,
+  toSymbol: string
+): Promise<any> => {
   try {
-    const res = await axios.get(
-      `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=${process.env.ALPHA_VANTAGE_API_KEY}`
-    );
+    const fn = 'FX_DAILY';
+    const output = 'full';
+    const BASE_URL = 'https://www.alphavantage.co/query?';
+    const API_KEY = process.env.ALPHA_VANTAGE_API_KEY;
+    const res = await axios.get(BASE_URL, {
+      params: {
+        function: fn,
+        from_symbol: fromSymbol.toUpperCase(),
+        to_symbol: toSymbol.toUpperCase(),
+        outputsize: output,
+        apikey: API_KEY,
+      },
+    });
+
+    if(!res) throw new ApiError('No se obtuvo respuesta de Alpha vintage', 502)
+    
+
     return res.data;
   } catch (error) {
-    console.error('Error  fetching historical data: ', error);
-    throw error;
+    throw new ApiError('Respuesta inesperada de Alpha vantage', 502)
   }
 };
 
@@ -41,8 +58,8 @@ export const fetchPreviousDayData = async (): Promise<any> => {
 
     return {
       date: formatedDate,
-      data: previousDayData
-    }
+      data: previousDayData,
+    };
   } catch (error) {
     console.error('Error fetching previous day data: ', error);
     throw error;

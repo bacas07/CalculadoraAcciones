@@ -64,7 +64,7 @@ const startingServer = async () => {
 
 // funcion principal para obtener el historico de datos completos
 const parsing = async () => {
-  const data = await fetchHistoricalData();
+  const data = await fetchHistoricalData('eur', 'usd');
 
   if (!data?.['Time Series (Daily)']) {
     console.warn('Formato de respuesta inesperado: ', data);
@@ -75,7 +75,7 @@ const parsing = async () => {
   console.log(points);
 };
 
-// parsing();
+parsing();
 
 // Funcion para obtener el valor del dia anterior
 const parsingLatest = async () => {
