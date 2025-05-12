@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import UsdJpyController from '../controllers/eurUsd.controller.js';
+import UsdJpyController from '../controllers/usdJpy.controller.js';
 
 const UsdJpyRouter = Router();
 
