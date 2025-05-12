@@ -27,7 +27,7 @@ import {
 const PORT = process.env.PORT || 5000;
 const server = express();
 
-// Lectuta de json para nuestra aplicacion
+// Lectura de json para nuestra aplicacion
 server.use(express.json());
 
 // Implementacion de middlewares
@@ -75,7 +75,7 @@ const parsing = async () => {
   console.log(points);
 };
 
-parsing();
+// parsing();
 
 // Funcion para obtener el valor del dia anterior
 const parsingLatest = async () => {

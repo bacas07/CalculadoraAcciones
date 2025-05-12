@@ -4,6 +4,8 @@ import { parse } from 'valibot';
 import { stockDataPointSchemaValibot } from '../validators/stockDataPoint.validator.js';
 import { IStockDataPoint } from '../types/types.js';
 import ApiError from '../errors/apiError.js'; // Importamos ApiError
+import { fetchHistoricalData } from '../services/fetchingData.service.js';
+import { parseStockData } from '../services/parseStockData.service.js';
 
 class EurUsdController {
   private service = EurUsdService;
@@ -79,6 +81,21 @@ class EurUsdController {
     try {
       const deleted = await this.service.deleteOne(id);
       return res.json(deleted);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async bulkInsert(req: Request, res: Response, next: NextFunction) {
+    try {
+      const data = await fetchHistoricalData('eur', 'usd');
+      const parsed = parseStockData(data);
+
+      const inserted = await EurUsdService.createMany(parsed);
+      return res.status(201).json({
+        message: 'Datos historicos insertados',
+        insertedCount: inserted?.length,
+      });
     } catch (error) {
       next(error);
     }
