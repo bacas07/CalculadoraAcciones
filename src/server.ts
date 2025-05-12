@@ -1,7 +1,5 @@
 import express, { Request, Response } from 'express';
 import { connectDB } from './database/mongo.js';
-import requestRouter from './routes/forexRequest.routes.js';
-import responseRouter from './routes/forexResponse.routes.js';
 import EurUsdRouter from './routes/eurUsd.routes.js';
 import GbpUsdRouter from './routes/gbpUsd.routes.js';
 import UsdJpyRouter from './routes/UsdJpy.routes.js';
@@ -38,10 +36,6 @@ server.use(morgan);
 server.get('/', (req: Request, res: Response) => {
   res.status(200).json({ message: 'Welcome to Forex Predict' });
 });
-
-// Rutas antiguas sin funcionalidad en el nuevo codigo
-server.use('/forex-request', requestRouter);
-server.use('/forex-response', responseRouter);
 
 // Rutas nuevas para predicciones reales
 server.use('/eurusd', EurUsdRouter);
