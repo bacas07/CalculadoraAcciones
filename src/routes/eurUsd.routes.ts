@@ -33,5 +33,11 @@ EurUsdRouter.delete(
     EurUsdController.deleteOne(req, res, next);
   }
 );
+EurUsdRouter.get(
+  '/bulkinsert',
+  (req: Request, res: Response, next: NextFunction) => {
+    EurUsdController.bulkInsert(req, res, next)
+  }
+)
 
 export default EurUsdRouter;
