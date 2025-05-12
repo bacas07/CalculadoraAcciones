@@ -33,5 +33,11 @@ GbpUsdRouter.delete(
     GbpUsdController.deleteOne(req, res, next);
   }
 );
+GbpUsdRouter.get(
+  '/bulkinsert',
+  (req: Request, res: Response, next: NextFunction) => {
+    GbpUsdController.bulkInsert(req, res, next);
+  }
+);
 
 export default GbpUsdRouter;
