@@ -4,6 +4,8 @@ import { parse } from 'valibot';
 import { stockDataPointSchemaValibot } from '../validators/stockDataPoint.validator.js';
 import { IStockDataPoint } from '../types/types.js';
 import ApiError from '../errors/apiError.js'; // Importamos ApiError con el nombre corregido
+import { fetchHistoricalData } from '../services/fetchingData.service.js';
+import { parseStockData } from '../services/parseStockData.service.js';
 
 class UsdJpyController {
   private service = UsdJpyService;
@@ -77,6 +79,21 @@ class UsdJpyController {
     try {
       const deleted = await this.service.deleteOne(id);
       return res.json(deleted);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async bulkInsert(req: Request, res: Response, next: NextFunction) {
+    try {
+      const data = await fetchHistoricalData('usd', 'jpy');
+      const parsed = parseStockData(data);
+
+      const inserted = await UsdJpyService.createMany(parsed);
+      return res.status(201).json({
+        message: 'Datos historicos insertados',
+        insertedCount: inserted?.length,
+      });
     } catch (error) {
       next(error);
     }
