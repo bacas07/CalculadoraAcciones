@@ -4,6 +4,8 @@ import { parse } from 'valibot';
 import { stockDataPointSchemaValibot } from '../validators/stockDataPoint.validator.js';
 import { IStockDataPoint } from '../types/types.js';
 import ApiError from '../errors/apiError.js'; // Importamos ApiError con el nombre corregido
+import { fetchHistoricalData } from '../services/fetchingData.service.js';
+import { parseStockData } from '../services/parseStockData.service.js';
 
 class GbpUsdController {
   private service = GbpUsdService;
@@ -39,8 +41,8 @@ class GbpUsdController {
       } catch (validationError) {
         // Capture los errores de validación específicamente
         throw new ApiError(
-          'Error de validación en los datos', 
-          400, 
+          'Error de validación en los datos',
+          400,
           validationError
         );
       }
@@ -63,8 +65,8 @@ class GbpUsdController {
         return res.status(201).json(inserted);
       } catch (validationError) {
         throw new ApiError(
-          'Error de validación en los datos del arreglo', 
-          400, 
+          'Error de validación en los datos del arreglo',
+          400,
           validationError
         );
       }
@@ -78,6 +80,21 @@ class GbpUsdController {
     try {
       const deleted = await this.service.deleteOne(id);
       return res.json(deleted);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async bulkInsert(req: Request, res: Response, next: NextFunction) {
+    try {
+      const data = await fetchHistoricalData('gbp', 'usd');
+      const parsed = parseStockData(data);
+
+      const inserted = await GbpUsdService.createMany(parsed);
+      return res.status(201).json({
+        message: 'Datos historicos insertados',
+        insertedCount: inserted?.length,
+      });
     } catch (error) {
       next(error);
     }
