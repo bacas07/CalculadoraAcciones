@@ -56,34 +56,4 @@ const startingServer = async () => {
   }
 };
 
-// funcion principal para obtener el historico de datos completos
-const parsing = async () => {
-  const data = await fetchHistoricalData('eur', 'usd');
-
-  if (!data?.['Time Series FX (Daily)']) {
-    // console.warn('Formato de respuesta inesperado: ', data);
-    return;
-  }
-
-  const points = parseStockData(data);
-  console.log(points);
-};
-
-// parsing();
-
-// Funcion para obtener el valor del dia anterior
-const parsingLatest = async () => {
-  const data = await fetchPreviousDayData('eur', 'usd');
-
-  if (!data) {
-    console.warn('No se encontro informacion para el dia anterior: ', data);
-    return;
-  }
-
-  const point = parseSingleStock(data);
-  console.log(point);
-};
-
-// parsingLatest();
-
 startingServer();
