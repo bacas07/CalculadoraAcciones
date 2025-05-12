@@ -23,45 +23,63 @@ export const fetchHistoricalData = async (
       },
     });
 
-    if(!res) throw new ApiError('No se obtuvo respuesta de Alpha vintage', 502)
-    
+    if (!res)
+      throw new ApiError('No se obtuvo respuesta de Alpha vintage', 502);
 
     return res.data;
   } catch (error) {
-    throw new ApiError('Respuesta inesperada de Alpha vantage', 502)
+    throw new Error(`Respuesta inesperada de Alpha vantage: ${error}`);
   }
 };
 
-export const fetchPreviousDayData = async (): Promise<any> => {
-  try {
-    const res = await axios.get(
-      `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=${process.env.ALPHA_VANTAGE_API_KEY}`
-    );
-    const timeSeries = res.data['Time Series (Daily)'];
+type TimeSeries = Record<string, Record<string, string>>;
 
-    if (!timeSeries) {
-      throw new Error('Time series not found in response');
-    }
+const getLastTradingDate = (series: TimeSeries): string => {
+  const dates = Object.keys(series).sort(
+    (a, b) => new Date(b).getTime() - new Date(a).getTime()
+  );
 
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const year = yesterday.getFullYear();
-    const month = String(yesterday.getMonth() + 1).padStart(2, '0');
-    const day = String(yesterday.getDate()).padStart(2, '0');
-    const formatedDate = `${year}-${month}-${day}`;
-
-    const previousDayData = timeSeries[formatedDate];
-
-    if (!formatedDate) {
-      throw new Error(`No data found for ${formatedDate}`);
-    }
-
-    return {
-      date: formatedDate,
-      data: previousDayData,
-    };
-  } catch (error) {
-    console.error('Error fetching previous day data: ', error);
-    throw error;
+  if (dates.length === 0) {
+    throw new ApiError('No hay fechas disponibles en el Time Series', 404);
   }
+
+  return dates[0];
+};
+
+export const fetchPreviousDayData = async (
+  fromSymbol: string,
+  toSymbol: string
+): Promise<{ date: string; data: Record<string, string> }> => {
+  // 1) Llamada genérica: función FX_DAILY y tamaño compact
+  const response = await axios.get('https://www.alphavantage.co/query?', {
+    params: {
+      function: 'FX_DAILY',
+      from_symbol: fromSymbol.toUpperCase(),
+      to_symbol: toSymbol.toUpperCase(),
+      outputsize: 'compact',
+      apikey: process.env.ALPHA_VANTAGE_API_KEY,
+    },
+  });
+
+  // 2) Usamos la clave correcta y comprobamos
+  const series = (response.data as any)['Time Series FX (Daily)'] as TimeSeries;
+  if (!series) {
+    const note =
+      (response.data as any)['Note'] ||
+      (response.data as any)['Error Message'] ||
+      'Time Series FX (Daily) ausente';
+    throw new ApiError(`Alpha Vantage error: ${note}`, 502, response.data);
+  }
+
+  // 3) En vez de suponer “ayer”, tomamos la última fecha disponible
+  const lastDate = getLastTradingDate(series);
+  const data = series[lastDate];
+
+  // 4) Validamos que haya datos en esa fecha
+  if (!data) {
+    throw new ApiError(`No hay datos para la fecha ${lastDate}`, 404);
+  }
+
+  // 5) Devolvemos fecha + registro completo
+  return { date: lastDate, data };
 };

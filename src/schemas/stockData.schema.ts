@@ -24,11 +24,7 @@ const StockDataSchema = new Schema<IStockDataPointMongoose>({
   close: {
     type: Number,
     required: true,
-  },
-  volume: {
-    type: Number,
-    required: true,
-  },
+  }
 });
 
 export const EurUsdModel = model<IStockDataPoint>('EurUsd', StockDataSchema);

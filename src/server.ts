@@ -66,8 +66,8 @@ const startingServer = async () => {
 const parsing = async () => {
   const data = await fetchHistoricalData('eur', 'usd');
 
-  if (!data?.['Time Series (Daily)']) {
-    console.warn('Formato de respuesta inesperado: ', data);
+  if (!data?.['Time Series FX (Daily)']) {
+    // console.warn('Formato de respuesta inesperado: ', data);
     return;
   }
 
@@ -79,7 +79,7 @@ parsing();
 
 // Funcion para obtener el valor del dia anterior
 const parsingLatest = async () => {
-  const data = await fetchPreviousDayData();
+  const data = await fetchPreviousDayData('eur', 'usd');
 
   if (!data) {
     console.warn('No se encontro informacion para el dia anterior: ', data);

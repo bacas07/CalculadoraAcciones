@@ -40,7 +40,6 @@ export interface IStockDataPoint {
   high: number;
   low: number;
   close: number;
-  volume: number;
 }
 
 export interface IStockDataPointMongoose extends Document {
@@ -49,5 +48,4 @@ export interface IStockDataPointMongoose extends Document {
   high: number;
   low: number;
   close: number;
-  volume: number;
 }
