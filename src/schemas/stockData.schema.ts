@@ -27,8 +27,8 @@ const StockDataSchema = new Schema<IStockDataPointMongoose>({
   }
 });
 
-export const EurUsdModel = model<IStockDataPoint>('EurUsd', StockDataSchema);
+export const EurUsdModel = model<IStockDataPoint>('EurUsd', StockDataSchema, 'EurUsd');
 
-export const UsdJpyModel = model<IStockDataPoint>('UsdJpy', StockDataSchema);
+export const UsdJpyModel = model<IStockDataPoint>('UsdJpy', StockDataSchema, 'UsdJpy');
 
-export const GbpUsdModel = model<IStockDataPoint>('BgpUsd', StockDataSchema);
+export const GbpUsdModel = model<IStockDataPoint>('BgpUsd', StockDataSchema, 'GbpUsd');

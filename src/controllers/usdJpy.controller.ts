@@ -89,7 +89,7 @@ class UsdJpyController {
       const data = await fetchHistoricalData('usd', 'jpy');
       const parsed = parseStockData(data);
 
-      const inserted = await UsdJpyService.createMany(parsed);
+      const inserted = await this.service.createMany(parsed);
       return res.status(201).json({
         message: 'Datos historicos insertados',
         insertedCount: inserted?.length,

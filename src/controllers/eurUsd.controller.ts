@@ -91,7 +91,7 @@ class EurUsdController {
       const data = await fetchHistoricalData('eur', 'usd');
       const parsed = parseStockData(data);
 
-      const inserted = await EurUsdService.createMany(parsed);
+      const inserted = await this.service.createMany(parsed);
       return res.status(201).json({
         message: 'Datos historicos insertados',
         insertedCount: inserted?.length,

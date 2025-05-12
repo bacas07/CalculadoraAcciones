@@ -90,7 +90,7 @@ class GbpUsdController {
       const data = await fetchHistoricalData('gbp', 'usd');
       const parsed = parseStockData(data);
 
-      const inserted = await GbpUsdService.createMany(parsed);
+      const inserted = await this.service.createMany(parsed);
       return res.status(201).json({
         message: 'Datos historicos insertados',
         insertedCount: inserted?.length,
