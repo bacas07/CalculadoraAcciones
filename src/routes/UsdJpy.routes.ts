@@ -33,5 +33,11 @@ UsdJpyRouter.delete(
     UsdJpyController.deleteOne(req, res, next);
   }
 );
+UsdJpyRouter.get(
+  '/bulkinsert',
+  (req: Request, res: Response, next: NextFunction) => {
+    UsdJpyController.bulkInsert(req, res, next);
+  }
+);
 
 export default UsdJpyRouter;
