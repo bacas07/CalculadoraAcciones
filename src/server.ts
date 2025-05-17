@@ -12,16 +12,6 @@ import cors from './middlewares/external/cors.js';
 import helmet from './middlewares/external/helmet.js';
 import morgan from './middlewares/external/morgan.js';
 
-// Testing new features
-import {
-  fetchHistoricalData,
-  fetchPreviousDayData,
-} from './services/fetchingData.service.js';
-import {
-  parseStockData,
-  parseSingleStock,
-} from './services/parseStockData.service.js';
-
 const PORT = process.env.PORT || 5000;
 const server = express();
 
