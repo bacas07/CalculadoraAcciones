@@ -1,8 +1,11 @@
 import express, { Request, Response } from 'express';
+
 import { connectDB } from './database/mongo.js';
+
 import EurUsdRouter from './routes/eurUsd.routes.js';
 import GbpUsdRouter from './routes/gbpUsd.routes.js';
 import UsdJpyRouter from './routes/UsdJpy.routes.js';
+import AnalysisRouter from './routes/analysis.routes.js';
 
 // Error handler
 import { errorHandler } from './middlewares/custom/errorHandler.js';
@@ -31,6 +34,7 @@ server.get('/', (req: Request, res: Response) => {
 server.use('/eurusd', EurUsdRouter);
 server.use('/gbpusd', GbpUsdRouter);
 server.use('/usdjpy', UsdJpyRouter);
+server.use('/analysis', AnalysisRouter);
 
 server.use(errorHandler);
 
