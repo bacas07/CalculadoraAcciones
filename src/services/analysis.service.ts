@@ -8,6 +8,11 @@ interface LinearRegressionResult {
   rSquared: number; // Coeficiente de determinacion
 }
 
+interface LagrangeResult {
+  interpolatedValue: number | null;
+  errorMessage?: string;
+}
+
 class AnalysisService {
   public calculateLinearRegression(
     dataPoints: IStockDataPoint[]
@@ -137,6 +142,53 @@ class AnalysisService {
       interpolatedData.push(nextPoint); // Añade el siguiente punto original
     }
     return interpolatedData;
+  }
+
+  public lagrangeInterpolate(
+    xValues: number[],
+    yValues: number[],
+    xTarget: number
+  ): LagrangeResult {
+    const n = xValues.length;
+
+    if (n !== yValues.length) {
+      return {
+        interpolatedValue: null,
+        errorMessage: 'Las longitudes de xValues y yValues deben ser iguales.',
+      };
+    }
+    if (n === 0) {
+      return {
+        interpolatedValue: null,
+        errorMessage: 'No se pueden interpolar puntos sin datos.',
+      };
+    }
+    if (n === 1) {
+      // Si solo hay un punto, el valor interpolado es ese y.
+      return { interpolatedValue: yValues[0] };
+    }
+
+    let interpolatedValue = 0;
+
+    for (let j = 0; j < n; j++) {
+      let basisPolynomial = 1;
+      for (let m = 0; m < n; m++) {
+        if (m !== j) {
+          // Evitar división por cero si hay xValues duplicados (lo cual no debería ocurrir con índices de tiempo)
+          if (xValues[j] - xValues[m] === 0) {
+            return {
+              interpolatedValue: null,
+              errorMessage:
+                'Error: Los valores de x deben ser únicos para la interpolación de Lagrange.',
+            };
+          }
+          basisPolynomial *= (xTarget - xValues[m]) / (xValues[j] - xValues[m]);
+        }
+      }
+      interpolatedValue += yValues[j] * basisPolynomial;
+    }
+
+    return { interpolatedValue: interpolatedValue };
   }
 }
 
