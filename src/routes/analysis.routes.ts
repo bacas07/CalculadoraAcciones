@@ -19,4 +19,11 @@ AnalysisRouter.get(
   }
 );
 
+AnalysisRouter.get(
+  '/interpolate-lagrange/:symbol/:windowSize/:xTarget',
+  (req: Request, res: Response, next: NextFunction) => {
+    AnalysisController.getLagrangeInterpolation(req, res, next);
+  }
+);
+
 export default AnalysisRouter;
