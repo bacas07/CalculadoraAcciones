@@ -12,4 +12,11 @@ AnalysisRouter.get(
   }
 );
 
+AnalysisRouter.get(
+  '/interpolate-linear/:symbol/:windowSize',
+  (req: Request, res: Response, next: NextFunction) => {
+    AnalysisController.getLinearRegression(req, res, next);
+  }
+);
+
 export default AnalysisRouter;
