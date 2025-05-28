@@ -1,7 +1,6 @@
-// src/services/analysis.service.ts
-
-import * as math from 'mathjs'; // Importa todo el objeto mathjs
+import * as math from 'mathjs';
 import type { IStockDataPoint } from '../types/types.js';
+import { addDays } from '../utils/dateUtils.js';
 
 interface LinearRegressionResult {
   slope: number;
@@ -83,6 +82,61 @@ class AnalysisService {
     */
 
     return { slope, intercept, rSquared };
+  }
+
+  // Funcion para interpolar y normalizar datos faltantes
+  public interpolateMissingData(
+    dataPoints: IStockDataPoint[]
+  ): IStockDataPoint[] {
+    if (dataPoints.length < 2) {
+      // No se puede interpolar con menos de 2 puntos, devuelve una copia.
+      return [...dataPoints];
+    }
+
+    const interpolatedData: IStockDataPoint[] = [];
+    interpolatedData.push(dataPoints[0]); // Añade el primer punto original
+
+    for (let i = 0; i < dataPoints.length - 1; i++) {
+      const currentPoint = dataPoints[i];
+      const nextPoint = dataPoints[i + 1];
+
+      const currentDate = new Date(currentPoint.date);
+      const nextDate = new Date(nextPoint.date);
+
+      // Calcula la diferencia en días. Math.ceil es importante para capturar gaps parciales o exactos.
+      // Si diffDays es 1, significa que son días consecutivos (ej. 2025-05-01 y 2025-05-02).
+      // Si diffDays es > 1, hay días faltantes.
+      const diffTime = Math.abs(nextDate.getTime() - currentDate.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays > 1) {
+        // Hay un gap de más de un día
+        const numMissingDays = diffDays - 1;
+
+        for (let j = 1; j <= numMissingDays; j++) {
+          const missingDateStr = addDays(currentPoint.date, j);
+          // Interpolación lineal del precio de cierre
+          const interpolatedClose =
+            currentPoint.close +
+            (nextPoint.close - currentPoint.close) * (j / diffDays);
+
+          const interpolatedPoint: IStockDataPoint = {
+            date: missingDateStr,
+            open: interpolatedClose, // Usar el valor interpolado para open, high, low
+            high: interpolatedClose,
+            low: interpolatedClose,
+            close: interpolatedClose,
+            // Si tu IStockDataPoint tiene 'volume', decide cómo manejarlo.
+            // Para simplificar, puedes dejarlo como 0 o interpolarlo si tiene sentido.
+            // volume: 0,
+            // __v: 0 // Si tu modelo requiere __v, asegúrate de añadirlo o quitarlo del tipo si no es necesario.
+          };
+          interpolatedData.push(interpolatedPoint);
+        }
+      }
+      interpolatedData.push(nextPoint); // Añade el siguiente punto original
+    }
+    return interpolatedData;
   }
 }
 
