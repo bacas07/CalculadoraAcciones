@@ -31,34 +31,42 @@ class AnalysisController {
 
     try {
       const service = this.services[symbol as keyof typeof this.services];
-      const dataPoints: IStockDataPoint[] =
-        await service.getRecentData(parsedWindowSize);
+      // 1. Obtener los datos crudos (con posibles gaps)
+      const rawDataPoints: IStockDataPoint[] = await (
+        service as any
+      ).getRecentData(parsedWindowSize);
 
+      // 2. Aplicar la interpolación lineal para rellenar los gaps
+      const dataPoints: IStockDataPoint[] = AnalysisService.interpolateMissingData(rawDataPoints);
+
+      // 3. Verificar si hay suficientes datos DESPUÉS de la interpolación
+      // Puede que rawDataPoints.length sea menor que windowSize,
+      // pero interpolatedData.length podría ser mayor o igual a windowSize
+      // si los gaps fueron rellenados.
       if (dataPoints.length < parsedWindowSize) {
         console.warn(
-          `No hay suficientes datos para windowSize=${parsedWindowSize}. Se usaron ${dataPoints.length} datos.`
+          `No hay suficientes datos para windowSize=${parsedWindowSize} (después de interpolar). Se usaron ${dataPoints.length} datos.`
         );
-        // Puedes decidir lanzar un error 404 aquí si la cantidad de datos es crítica
+        // Si incluso después de interpolar no hay suficientes puntos para la ventana,
+        // o si los puntos interpolados siguen siendo < 2 (mínimo para regresión), lanza un error.
         if (dataPoints.length < 2) {
-          // Asegurarse de tener el mínimo para el cálculo
-          throw new ApiError(
-            'No hay suficientes datos históricos para realizar la regresión lineal con la ventana especificada.',
-            404
-          );
+            throw new ApiError(
+                'No hay suficientes datos históricos (o el período es muy corto) para realizar la regresión lineal.',
+                404
+            );
         }
       }
 
-      // Llama a la función de regresión lineal desde el AnalysisService
-      const regressionResult =
-        AnalysisService.calculateLinearRegression(dataPoints);
+      const regressionResult = AnalysisService.calculateLinearRegression(dataPoints);
 
       return res.json({
         symbol: symbol,
         windowSize: parsedWindowSize,
-        ...regressionResult, // slope, intercept, rSquared
+        ...regressionResult,
+        rawDataCount: rawDataPoints.length, // Para ver cuántos datos originales había
+        interpolatedDataCount: dataPoints.length // Para ver cuántos datos se usaron después de interpolar
       });
     } catch (error) {
-      // Si calculateLinearRegression lanza un error (ej. por datos insuficientes), será capturado aquí
       if (error instanceof Error) {
         return next(
           new ApiError(
