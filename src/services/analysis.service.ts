@@ -13,6 +13,12 @@ interface LagrangeResult {
   errorMessage?: string;
 }
 
+interface TrapezoidalResult {
+  area: number;
+  segments: number;
+  errorMessage?: string;
+}
+
 class AnalysisService {
   public calculateLinearRegression(
     dataPoints: IStockDataPoint[]
@@ -189,6 +195,48 @@ class AnalysisService {
     }
 
     return { interpolatedValue: interpolatedValue };
+  }
+
+  public integrateTrapezoidal(
+    slope: number,
+    intercept: number,
+    lowerBound: number,
+    upperBound: number,
+    numSegments: number = 100 // Número por defecto de segmentos para una buena precisión
+  ): TrapezoidalResult {
+    if (numSegments <= 0) {
+      return {
+        area: 0,
+        segments: numSegments,
+        errorMessage: 'El número de segmentos debe ser mayor a 0.',
+      };
+    }
+    if (lowerBound >= upperBound) {
+      return {
+        area: 0,
+        segments: numSegments,
+        errorMessage:
+          'El límite inferior debe ser menor que el límite superior.',
+      };
+    }
+
+    // La función que vamos a integrar (la línea de tendencia)
+    // f(x) = pendiente * x + intercepto
+    const f = (x: number): number => slope * x + intercept;
+
+    // Ancho de cada segmento (h)
+    const h = (upperBound - lowerBound) / numSegments;
+    let sum = 0.5 * (f(lowerBound) + f(upperBound)); // Suma los valores en los extremos, divididos por 2
+
+    // Suma los valores de f(x) en los puntos intermedios
+    for (let i = 1; i < numSegments; i++) {
+      const x_i = lowerBound + i * h;
+      sum += f(x_i);
+    }
+
+    const area = sum * h; // Multiplica la suma por el ancho de cada segmento
+
+    return { area: area, segments: numSegments };
   }
 }
 
