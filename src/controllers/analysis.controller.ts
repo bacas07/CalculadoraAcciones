@@ -71,7 +71,65 @@ class AnalysisController {
     }
   }
 
-  // Aquí agregarás los controladores para los demás métodos numéricos
+  async getInterpolatedLinearData(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    const { symbol, windowSize } = req.params;
+
+    if (!(symbol in this.services)) {
+      return next(new ApiError(`Símbolo de divisa inválido: ${symbol}`, 400));
+    }
+    const parsedWindowSize = parseInt(windowSize);
+    if (isNaN(parsedWindowSize) || parsedWindowSize < 2) {
+      return next(
+        new ApiError(
+          'El tamaño de la ventana (windowSize) debe ser un número entero mayor o igual a 2.',
+          400
+        )
+      );
+    }
+
+    try {
+      const service = this.services[symbol as keyof typeof this.services];
+      // Obtener los datos crudos (con posibles gaps)
+      const rawDataPoints: IStockDataPoint[] = await (
+        service as any
+      ).getRecentData(parsedWindowSize);
+
+      // Aplicar la interpolación lineal
+      const interpolatedData: IStockDataPoint[] =
+        AnalysisService.interpolateMissingData(rawDataPoints);
+
+      return res.json({
+        symbol: symbol,
+        windowSize: parsedWindowSize,
+        rawDataCount: rawDataPoints.length,
+        interpolatedDataCount: interpolatedData.length,
+        // Devolver solo la fecha y el cierre para no saturar la respuesta,
+        // o todos los campos si es necesario.
+        interpolatedData: interpolatedData.map((d) => ({
+          date: d.date,
+          open: d.open,
+          high: d.high,
+          low: d.low,
+          close: d.close,
+          // Añade otras propiedades si las tienes y quieres verlas
+        })),
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        return next(
+          new ApiError(
+            `Error al obtener datos interpolados: ${error.message}`,
+            500
+          )
+        );
+      }
+      next(error);
+    }
+  }
 }
 
 export default new AnalysisController();
