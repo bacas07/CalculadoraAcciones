@@ -15,3 +15,9 @@ export const parseTimeRange = (timeRange: string): number => {
 export const addTimeToDate = (date: Date, timeRangeMs: number): Date => {
   return new Date(date.getTime() + timeRangeMs);
 };
+
+export const addDays = (dateString: string, days: number): string => {
+  const date = new Date(dateString);
+  date.setDate(date.getDate() + days);
+  return date.toISOString().split('T')[0]; // Formato 'YYYY-MM-DD'
+};
