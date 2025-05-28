@@ -32,18 +32,20 @@ class AnalysisService {
 
     // Calcular las diferencias elemento a elemento usando JS nativo
     // Esto evita los problemas de tipado de mathjs con MathType vs number[] para estas ops
-    const xMinusMean: number[] = xValues.map(x => x - xMean);
-    const yMinusMean: number[] = yValues.map(y => y - yMean);
+    const xMinusMean: number[] = xValues.map((x) => x - xMean);
+    const yMinusMean: number[] = yValues.map((y) => y - yMean);
 
     // Calcular numerador y denominador para la pendiente (m)
     // Multiplicación elemento a elemento
-    const xyMinusMeansProduct: number[] = xMinusMean.map((val, i) => val * yMinusMean[i]);
-    
+    const xyMinusMeansProduct: number[] = xMinusMean.map(
+      (val, i) => val * yMinusMean[i]
+    );
+
     const numerator = math.sum(xyMinusMeansProduct) as number;
 
     // Cuadrado elemento a elemento
-    const xMinusMeanSquared: number[] = xMinusMean.map(x => x * x);
-    
+    const xMinusMeanSquared: number[] = xMinusMean.map((x) => x * x);
+
     const denominator = math.sum(xMinusMeanSquared) as number;
 
     if (denominator === 0) {
@@ -66,7 +68,19 @@ class AnalysisService {
       ssResidual += (yActual - yPredicted) * (yActual - yPredicted);
     }
 
-    const rSquared = (ssTotal === 0) ? 1 : 1 - (ssResidual / ssTotal);
+    const rSquared = ssTotal === 0 ? 1 : 1 - ssResidual / ssTotal;
+
+    /*
+      slope: representa la tendencia de los datos, en caso de ser negativo significa
+      que el precio tiende a disminuir con el tiempo
+
+      intercept: es el valor de y cuando x es 0, es el valor de cierre inicial
+
+      rSquared: explica que tan predecible o acertada es la prediccion mediante la 
+      regresion lineal, que tan bien se puede explicar la tendencia mediante la
+      regresion lineal. Digamos que tiene un porcentaje que se debe a la aleatoridad
+      del mercado, lo cual lo hace impredecible en cierto porcentaje.
+    */
 
     return { slope, intercept, rSquared };
   }
