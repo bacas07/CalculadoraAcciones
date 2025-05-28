@@ -94,6 +94,21 @@ class GbpUsdService {
       );
     }
   }
+
+  async getRecentData(limit: number): Promise<IStockDataPoint[]> {
+    try {
+      const result = await this.model.find({})
+        .sort({ date: -1 }) // Ordena de más reciente a más antiguo
+        .limit(limit)
+        .lean();
+      return result.reverse(); // Invertir el orden para que sea de más antiguo a más reciente
+    } catch (error) {
+      throw new ApiError(
+        `Error al obtener datos recientes para EurUsd: ${(error as Error).message}`,
+        500
+      );
+    }
+  }
 }
 
 export default new GbpUsdService();

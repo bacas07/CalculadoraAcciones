@@ -31,9 +31,8 @@ class AnalysisController {
 
     try {
       const service = this.services[symbol as keyof typeof this.services];
-      const dataPoints: IStockDataPoint[] = await (
-        service as any
-      ).getRecentData(parsedWindowSize);
+      const dataPoints: IStockDataPoint[] =
+        await service.getRecentData(parsedWindowSize);
 
       if (dataPoints.length < parsedWindowSize) {
         console.warn(
