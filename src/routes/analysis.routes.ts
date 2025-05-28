@@ -27,7 +27,7 @@ AnalysisRouter.get(
 );
 
 AnalysisRouter.get(
-  '/integrate-trapezoidal/:symbol/:windowSize/:lowerBound/:upperBound/:numSegments?',
+  '/integrate-trapezoidal/:symbol/:windowSize/:lowerBound/:upperBound/:numSegments',
   (req: Request, res: Response, next: NextFunction) => {
     AnalysisController.getTrapezoidalIntegral(req, res, next);
   }
