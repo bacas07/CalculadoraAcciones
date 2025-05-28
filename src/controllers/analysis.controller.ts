@@ -241,6 +241,87 @@ class AnalysisController {
       next(error);
     }
   }
+
+  async getTrapezoidalIntegral(req: Request, res: Response, next: NextFunction) {
+    const { symbol, windowSize, lowerBound, upperBound, numSegments } = req.params;
+
+    if (!(symbol in this.services)) {
+      return next(new ApiError(`Símbolo de divisa inválido: ${symbol}`, 400));
+    }
+
+    const parsedWindowSize = parseInt(windowSize);
+    const parsedLowerBound = parseFloat(lowerBound); // Puede ser decimal
+    const parsedUpperBound = parseFloat(upperBound); // Puede ser decimal
+    const parsedNumSegments = numSegments ? parseInt(numSegments) : 100; // Default a 100
+
+    if (isNaN(parsedWindowSize) || parsedWindowSize < 2 ||
+        isNaN(parsedLowerBound) || isNaN(parsedUpperBound) || parsedLowerBound >= parsedUpperBound ||
+        isNaN(parsedNumSegments) || parsedNumSegments <= 0) {
+      return next(new ApiError(
+        'Parámetros inválidos. windowSize debe ser >= 2, lowerBound < upperBound, y numSegments > 0.',
+        400
+      ));
+    }
+
+    try {
+      const service = this.services[symbol as keyof typeof this.services];
+      // 1. Obtener datos históricos crudos
+      const rawDataPoints: IStockDataPoint[] = await (service as any).getRecentData(parsedWindowSize);
+
+      // 2. Interpolar linealmente los datos para asegurar continuidad
+      const dataPoints: IStockDataPoint[] = AnalysisService.interpolateMissingData(rawDataPoints);
+
+      if (dataPoints.length < 2) {
+        throw new ApiError("No hay suficientes datos históricos para calcular la regresión lineal para la integral.", 404);
+      }
+
+      // 3. Calcular la regresión lineal para obtener la función f(x) = slope * x + intercept
+      const { slope, intercept } = AnalysisService.calculateLinearRegression(dataPoints);
+
+      // 4. Usar la función de integración por trapecios
+      const integralResult = AnalysisService.integrateTrapezoidal(
+        slope,
+        intercept,
+        parsedLowerBound,
+        parsedUpperBound,
+        parsedNumSegments
+      );
+
+      if (integralResult.errorMessage) {
+        return next(new ApiError(
+          `Error en el cálculo de la integral por trapecios: ${integralResult.errorMessage}`,
+          500
+        ));
+      }
+
+      // Opcional: Calcular las fechas correspondientes a los límites
+      const baseDate = dataPoints[0].date;
+      const lowerDate = addDays(baseDate, Math.round(parsedLowerBound));
+      const upperDate = addDays(baseDate, Math.round(parsedUpperBound));
+
+
+      return res.json({
+        symbol: symbol,
+        windowSize: parsedWindowSize,
+        lowerBound: parsedLowerBound,
+        upperBound: parsedUpperBound,
+        lowerDate: lowerDate, // Fecha del límite inferior
+        upperDate: upperDate, // Fecha del límite superior
+        numSegments: parsedNumSegments,
+        slopeUsed: slope, // Pendiente de la línea de tendencia utilizada
+        interceptUsed: intercept, // Intercepto de la línea de tendencia utilizada
+        integratedArea: integralResult.area, // El área bajo la curva
+        rawDataCount: rawDataPoints.length,
+        interpolatedDataCount: dataPoints.length,
+      });
+
+    } catch (error) {
+      if (error instanceof Error) {
+        return next(new ApiError(`Error al calcular la integral por trapecios: ${error.message}`, 500));
+      }
+      next(error);
+    }
+  }
 }
 
 export default new AnalysisController();
